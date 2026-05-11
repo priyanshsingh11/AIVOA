@@ -14,7 +14,7 @@ class AgentState(TypedDict):
 
 # Initialize the model
 model = ChatGroq(
-    model_name="gemma2-9b-it",
+    model_name="llama-3.1-8b-instant",
     groq_api_key=os.getenv("GROQ_API_KEY"),
     temperature=0.1
 )
