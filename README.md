@@ -2,7 +2,7 @@
 
 A sophisticated, high-fidelity CRM module designed to revolutionize how pharmaceutical and healthcare sales representatives interact with Healthcare Professionals (HCPs). This project leverages **Agentic AI** workflows to automate data entry, provide intelligent recommendations, and maintain a state-of-the-art interaction history.
 
-![AI CRM Dashboard Preview](dashboard_preview.png)
+![AI CRM Dashboard Preview](assets/dashboard_preview.png)
 
 ## System Architecture
 
