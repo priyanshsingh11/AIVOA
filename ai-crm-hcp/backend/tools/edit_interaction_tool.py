@@ -7,21 +7,12 @@ from typing import Optional
 
 class EditInteractionInput(BaseModel):
     interaction_id: int = Field(description="The ID of the interaction to edit")
-    hcp_name: Optional[str] = Field(None)
-    interaction_type: Optional[str] = Field(None)
-    topics_discussed: Optional[str] = Field(None)
-    sentiment: Optional[str] = Field(None)
-    follow_up: Optional[str] = Field(None)
-    summary: Optional[str] = Field(None)
-    date: Optional[str] = Field(None)
-    time: Optional[str] = Field(None)
-    attendees: Optional[str] = Field(None)
-    materials_shared: Optional[str] = Field(None)
-    samples_distributed: Optional[str] = Field(None)
-    outcomes: Optional[str] = Field(None)
+    sentiment: Optional[str] = Field(None, description="New sentiment value")
+    follow_up: Optional[str] = Field(None, description="Updated follow-up actions")
+    summary: Optional[str] = Field(None, description="Updated summary")
 
 @tool("edit_interaction_tool", args_schema=EditInteractionInput)
-def edit_interaction_tool(interaction_id: int, **kwargs):
+def edit_interaction_tool(interaction_id: int, sentiment: Optional[str] = None, follow_up: Optional[str] = None, summary: Optional[str] = None):
     """Update an existing HCP interaction in the database."""
     db: Session = SessionLocal()
     try:
@@ -29,9 +20,9 @@ def edit_interaction_tool(interaction_id: int, **kwargs):
         if not interaction:
             return {"status": "error", "message": "Interaction not found"}
         
-        for key, value in kwargs.items():
-            if value is not None:
-                setattr(interaction, key, value)
+        if sentiment: interaction.sentiment = sentiment
+        if follow_up: interaction.follow_up = follow_up
+        if summary: interaction.summary = summary
         
         db.commit()
         return {"status": "success", "message": f"Interaction {interaction_id} updated successfully"}

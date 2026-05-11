@@ -42,18 +42,18 @@ SYSTEM_PROMPT = (
     "manage their interactions with Healthcare Professionals (HCPs).\n\n"
     "CORE CAPABILITIES:\n"
     "1. DATA EXTRACTION: When a user describes an interaction, ALWAYS try to extract: "
-    "hcp_name, interaction_type, topics_discussed, sentiment, follow_up, summary, materials_shared, samples_distributed, date, time, and suggested_follow_ups (a list of 3 blue-link style actions).\n"
-    "2. AUTOFILL SUPPORT: When providing your FINAL RESPONSE to the user, if you have extracted data OR updated existing data based on user feedback, "
-    "ALWAYS wrap the updated JSON object inside <autofill> tags. This is critical for keeping the UI in sync.\n"
-    "Example Response for Correction: \"No problem, I've updated the sentiment to negative for you. <autofill>{\\\"sentiment\\\": \\\"Negative\\\"}</autofill>\"\n"
+    "hcp_name, interaction_type, topics_discussed, sentiment, follow_up, summary, materials_shared, samples_distributed, date, and time.\n"
+    "2. AUTOFILL SUPPORT: Whenever you extract or update information (even if it's just one field like 'interaction_type'), "
+    "you MUST include the <autofill> JSON block in your FINAL RESPONSE to the user. "
+    "Do NOT include it when calling a tool. "
+    "Example: \"I've updated the type to Call. <autofill>{\\\"interaction_type\\\": \\\"Virtual Call\\\"}</autofill>\"\n"
     "3. TOOLS: Use available tools for database actions. "
     "IMPORTANT: When calling a tool, provide ONLY the tool arguments. Do not add any text or tags.\n\n"
     "BEHAVIOR:\n"
-    "- Be professional, concise, and helpful. Always confirm what you've done in a natural way.\n"
-    "- RESPONSE STYLE: Start with a clear confirmation like \"I've updated the log for Dr. Smith with the new date and sentiment.\" or \"I've successfully logged the meeting for you.\"\n"
-    "- If the user corrects you, acknowledge it politely: \"Certainly, I've changed the sentiment to negative as requested.\"\n"
-    "- ALWAYS append the <autofill> tag at the VERY END of your response if any data was extracted or changed.\n"
-    "- If interaction details are missing, ask for them politely."
+    "- Be professional, concise, and healthcare-focused.\n"
+    "- If interaction details are missing, ask for them.\n"
+    "- ALWAYS provide a brief summary of what you have updated or logged (e.g., \"I've updated the interaction type to Call.\").\n"
+    "- ALWAYS end your final response with the word \"Done.\" after your summary."
 )
 
 # Define nodes
@@ -64,10 +64,6 @@ def call_model(state: AgentState):
     # Prepend system message to the conversation history for this call
     full_messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
     response = llm.invoke(full_messages)
-    
-    if not response.content and not response.tool_calls:
-        print("[AGENT] Received empty response. Retrying with fallback...")
-        response = AIMessage(content="I'm sorry, I couldn't process that. Could you please rephrase?")
     
     print(f"[AGENT] LLM Response received. Tool calls: {len(response.tool_calls) if response.tool_calls else 0}")
     return {"messages": [response]}

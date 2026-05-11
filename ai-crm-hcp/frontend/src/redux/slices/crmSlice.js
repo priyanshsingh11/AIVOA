@@ -15,11 +15,6 @@ const initialState = {
     follow_up: '',
     summary: '',
   },
-  suggestedFollowUps: [
-    "+ Schedule follow-up meeting in 2 weeks",
-    "+ Send OncoBoost Phase III PDF",
-    "+ Add Dr. Sharma to advisory board invite list"
-  ],
   messages: [
     { role: 'assistant', content: "Hello! I'm your AI HCP Assistant. How can I help you today?" }
   ],
@@ -38,9 +33,6 @@ const crmSlice = createSlice({
     batchUpdateFields: (state, action) => {
       state.currentInteraction = { ...state.currentInteraction, ...action.payload };
     },
-    setSuggestions: (state, action) => {
-      state.suggestedFollowUps = action.payload;
-    },
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
@@ -56,5 +48,5 @@ const crmSlice = createSlice({
   },
 });
 
-export const { updateField, batchUpdateFields, setSuggestions, addMessage, setLoading, setError, resetForm } = crmSlice.actions;
+export const { updateField, batchUpdateFields, addMessage, setLoading, setError, resetForm } = crmSlice.actions;
 export default crmSlice.reducer;
